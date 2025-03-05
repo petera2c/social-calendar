@@ -20,6 +20,7 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate }) => {
     for (let i = 0; i < startDay; i++) {
       const day = prevMonth.endOf("month").subtract(startDay - i - 1, "day");
       days.push({
+        canCreatePost: false,
         day,
         isCurrentDay: false,
         isOutOfMonth: true,
@@ -30,7 +31,9 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate }) => {
     for (let i = 0; i < firstDayOfMonth.daysInMonth(); i++) {
       const day = firstDayOfMonth.add(i, "day");
       const isCurrentDay = day.isSame(today, "day");
+      const canCreatePost = day.isSame(today, "day") || day.isAfter(today);
       days.push({
+        canCreatePost,
         day,
         isCurrentDay,
         isOutOfMonth: false,
@@ -42,6 +45,7 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate }) => {
     for (let i = 0; i < remainingSlots; i++) {
       const day = lastDayOfMonth.add(i + 1, "day");
       days.push({
+        canCreatePost: true,
         day,
         isCurrentDay: false,
         isOutOfMonth: true,

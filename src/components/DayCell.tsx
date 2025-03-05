@@ -24,13 +24,13 @@ const DayCell: React.FC<{ item: CalendarDay }> = ({ item }) => {
       <div
         className={`h-20 flex items-start justify-start p-2 text-sm bg-white relative ${
           item.day
-            ? item.isOutOfMonth
-              ? "bg-gray-50 text-gray-400"
-              : "hover:bg-blue-50 cursor-pointer"
+            ? item.canCreatePost
+              ? "hover:bg-blue-50 cursor-pointer"
+              : "bg-gray-50 text-gray-400"
             : "bg-gray-100 text-gray-300"
         } ${item.isCurrentDay ? "bg-blue-100 border-blue-500" : ""}`}
         onMouseEnter={() =>
-          item.day && !item.isOutOfMonth && setIsHovered(true)
+          item.day && item.canCreatePost && setIsHovered(true)
         }
         onMouseLeave={() => setIsHovered(false)}
         onClick={handleOpenModal}
@@ -44,7 +44,7 @@ const DayCell: React.FC<{ item: CalendarDay }> = ({ item }) => {
             {item.day.date()}
           </span>
         )}
-        {isHovered && item.day && !item.isOutOfMonth && (
+        {isHovered && item.canCreatePost && (
           <Button
             type="primary"
             shape="circle"
