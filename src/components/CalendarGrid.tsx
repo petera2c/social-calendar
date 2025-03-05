@@ -1,6 +1,7 @@
 import React from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { CalendarDay } from "../types/calendar";
+import CalendarGridBox from "./DayCell";
 
 interface CalendarGridProps {
   currentDate: Dayjs;
@@ -49,28 +50,7 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate }) => {
   return (
     <div className="grid gap-px grid-cols-7 bg-slate-200 border border-slate-300 rounded-lg overflow-hidden">
       {generateDays().map((item, index) => {
-        return (
-          <div
-            key={index}
-            className={`h-20 flex items-start justify-start p-2 text-sm bg-white ${
-              item.day
-                ? "hover:bg-blue-50 cursor-pointer"
-                : "bg-gray-100 text-gray-300"
-            } ${item.isCurrentDay ? "bg-blue-100 border-blue-500" : ""} ${
-              item.isOutOfMonth ? "bg-gray-50" : ""
-            }`}
-          >
-            {item.day && (
-              <span
-                className={`w-6 h-6 flex items-center justify-center rounded-full ${
-                  item.isCurrentDay ? "bg-blue-500 text-white" : "text-gray-700"
-                }`}
-              >
-                {item.day}
-              </span>
-            )}
-          </div>
-        );
+        return <CalendarGridBox key={index} item={item} />;
       })}
     </div>
   );
