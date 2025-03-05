@@ -37,7 +37,7 @@ const PostList: React.FC<PostListProps> = ({ posts }) => {
   if (posts.length === 0) return null;
 
   return (
-    <div className="space-y-1 mt-1 max-h-[120px] overflow-y-auto">
+    <div className="flex flex-col gap-1 mt-1 max-h-[120px] overflow-y-auto mx-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
       {posts.map((post) => (
         <div
           key={post.id}

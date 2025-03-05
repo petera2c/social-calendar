@@ -27,7 +27,7 @@ const DayCell: React.FC<{ item: CalendarDay; posts: Post[] }> = ({
   return (
     <>
       <div
-        className={`h-20 flex items-start justify-start p-2 text-sm bg-white relative ${
+        className={`min-h-20 flex items-start justify-start p-2 text-sm bg-white relative ${
           item.day
             ? item.canCreatePost
               ? "hover:bg-blue-50 cursor-pointer"
@@ -42,27 +42,20 @@ const DayCell: React.FC<{ item: CalendarDay; posts: Post[] }> = ({
       >
         {item.day && (
           <span
-            className={`w-6 h-6 flex items-center justify-center rounded-full ${
+            className={`w-6 h-6 flex items-center justify-center rounded-full shrink-0 ${
               item.isCurrentDay ? "bg-blue-500 text-white" : "text-gray-700"
             }`}
           >
             {item.day.date()}
           </span>
         )}
-        {posts.length > 0 && (
-          <div>
-            <PostList posts={posts} />
-          </div>
-        )}
+        {posts.length > 0 && <PostList posts={posts} />}
         {isHovered && item.canCreatePost && (
-          <Button
-            type="primary"
-            shape="circle"
-            size="large"
-            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-          >
-            <FontAwesomeIcon icon={faPlus} className="text-white" />
-          </Button>
+          <div className="absolute bottom-2 right-2">
+            <Button type="primary" shape="circle" size="small">
+              <FontAwesomeIcon icon={faPlus} className="text-white" />
+            </Button>
+          </div>
         )}
       </div>
       <CreatePostModal
