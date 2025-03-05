@@ -1,67 +1,133 @@
-import React, { useState } from "react";
-import { Modal, Form, Input, Button, DatePicker } from "antd";
+import React, { useEffect, useState } from "react";
+import { Modal, Form, Select, Button } from "antd";
 import dayjs, { Dayjs } from "dayjs";
+import XPostLayout from "./layouts/XPostLayout";
+import FacebookPostLayout from "./layouts/FacebookPostLayout";
+import InstagramPostLayout from "./layouts/InstagramPostLayout";
+import LinkedInPostLayout from "./layouts/LinkedInPostLayout";
+import PinterestPostLayout from "./layouts/PinterestPostLayout";
+
+const { Option } = Select;
 
 interface CreatePostModalProps {
   isOpen: boolean;
   onClose: () => void;
-  day: number;
+  day: Dayjs;
+  isOutOfMonth: boolean;
 }
+
+const platformOptions = [
+  { value: "x", label: "X" },
+  { value: "facebook", label: "Facebook" },
+  { value: "instagram", label: "Instagram" },
+  { value: "linkedin", label: "LinkedIn" },
+  { value: "pinterest", label: "Pinterest" },
+];
 
 const CreatePostModal: React.FC<CreatePostModalProps> = ({
   isOpen,
   onClose,
   day,
+  isOutOfMonth,
 }) => {
   const [form] = Form.useForm();
-  const [postDate, setPostDate] = useState<Dayjs | null>(null);
+  const [postDate, setPostDate] = useState<Dayjs>(day);
+  const [platform, setPlatform] = useState<string>("x");
 
   const handleFinish = (values: any) => {
-    console.log("Social Media Post Data:", {
+    console.log(`${platform.toUpperCase()} Post Data:`, {
       ...values,
       date: postDate ? postDate.format("YYYY-MM-DD") : null,
     });
     form.resetFields();
-    setPostDate(null);
+    setPostDate(day);
     onClose();
+  };
+
+  const renderLayout = () => {
+    switch (platform) {
+      case "x":
+        return (
+          <XPostLayout
+            form={form}
+            postDate={postDate}
+            setPostDate={setPostDate}
+          />
+        );
+      case "facebook":
+        return (
+          <FacebookPostLayout
+            form={form}
+            postDate={postDate}
+            setPostDate={setPostDate}
+          />
+        );
+      case "instagram":
+        return (
+          <InstagramPostLayout
+            form={form}
+            postDate={postDate}
+            setPostDate={setPostDate}
+          />
+        );
+      case "linkedin":
+        return (
+          <LinkedInPostLayout
+            form={form}
+            postDate={postDate}
+            setPostDate={setPostDate}
+          />
+        );
+      case "pinterest":
+        return (
+          <PinterestPostLayout
+            form={form}
+            postDate={postDate}
+            setPostDate={setPostDate}
+          />
+        );
+      default:
+        return null;
+    }
   };
 
   return (
     <Modal
-      title={`Create Social Media Post for Day ${day}`}
+      title={`Schedule a Post for Day ${day} on ${
+        platform.charAt(0).toUpperCase() + platform.slice(1)
+      }`}
       open={isOpen}
       onCancel={onClose}
       footer={null}
       centered
+      width={600}
     >
       <Form
         form={form}
-        layout="vertical"
         onFinish={handleFinish}
-        initialValues={{ content: "" }}
+        initialValues={{
+          date: day,
+        }}
       >
-        <Form.Item
-          label="Post Content"
-          name="content"
-          rules={[{ required: true, message: "Please enter post content" }]}
-        >
-          <Input.TextArea rows={4} placeholder="Write your post here..." />
-        </Form.Item>
-        <Form.Item label="Schedule Date" name="date">
-          <DatePicker
-            value={postDate}
-            onChange={(date) => setPostDate(date)}
-            disabledDate={(current) =>
-              current && current < dayjs().startOf("day")
-            }
+        <Form.Item label="Platform" className="mb-4">
+          <Select
+            value={platform}
+            onChange={(value) => setPlatform(value)}
             className="w-full"
-          />
+          >
+            {platformOptions.map((opt) => (
+              <Option key={opt.value} value={opt.value}>
+                {opt.label}
+              </Option>
+            ))}
+          </Select>
         </Form.Item>
-        <Form.Item>
+        {renderLayout()}
+        <Form.Item className="mt-4">
           <div className="flex justify-end space-x-2">
             <Button onClick={onClose}>Cancel</Button>
             <Button type="primary" htmlType="submit">
-              Create Post
+              Schedule Post
             </Button>
           </div>
         </Form.Item>

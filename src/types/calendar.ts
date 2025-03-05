@@ -1,7 +1,7 @@
 import { Dayjs } from "dayjs";
 
 export interface CalendarDay {
-  day: number;
+  day: Dayjs;
   isCurrentDay: boolean;
   isOutOfMonth: boolean;
 }

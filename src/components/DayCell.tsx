@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { CalendarDay } from "../types/calendar";
-import SocialMediaPostModal from "./CreatePostModal";
+import CreatePostModal from "./CreatePostModal";
 import { Button } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
@@ -33,6 +33,7 @@ const DayCell: React.FC<{ item: CalendarDay }> = ({ item }) => {
           item.day && !item.isOutOfMonth && setIsHovered(true)
         }
         onMouseLeave={() => setIsHovered(false)}
+        onClick={handleOpenModal}
       >
         {item.day && (
           <span
@@ -40,7 +41,7 @@ const DayCell: React.FC<{ item: CalendarDay }> = ({ item }) => {
               item.isCurrentDay ? "bg-blue-500 text-white" : "text-gray-700"
             }`}
           >
-            {item.day}
+            {item.day.date()}
           </span>
         )}
         {isHovered && item.day && !item.isOutOfMonth && (
@@ -48,17 +49,17 @@ const DayCell: React.FC<{ item: CalendarDay }> = ({ item }) => {
             type="primary"
             shape="circle"
             size="large"
-            onClick={handleOpenModal}
             className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
           >
             <FontAwesomeIcon icon={faPlus} className="text-white" />
           </Button>
         )}
       </div>
-      <SocialMediaPostModal
+      <CreatePostModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         day={item.day}
+        isOutOfMonth={item.isOutOfMonth}
       />
     </>
   );
