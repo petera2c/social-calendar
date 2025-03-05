@@ -2,12 +2,14 @@ import React from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { CalendarDay } from "../types/calendar";
 import DayCell from "./DayCell";
+import { Post } from "../types/post";
 
 interface CalendarGridProps {
   currentDate: Dayjs;
+  posts: Post[];
 }
 
-const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate }) => {
+const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate, posts }) => {
   const generateDays = (): CalendarDay[] => {
     const days: CalendarDay[] = [];
     const firstDayOfMonth = currentDate.startOf("month");
@@ -58,7 +60,14 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ currentDate }) => {
   return (
     <div className="grid gap-px grid-cols-7 bg-slate-200 border border-slate-300 rounded-lg overflow-hidden">
       {generateDays().map((item, index) => {
-        return <DayCell key={index} item={item} />;
+        // Filter posts for this specific day
+        const dayPosts = posts.filter(
+          (post) =>
+            dayjs(post.timestamp).format("YYYY-MM-DD") ===
+            item.day.format("YYYY-MM-DD")
+        );
+
+        return <DayCell key={index} item={item} posts={dayPosts} />;
       })}
     </div>
   );

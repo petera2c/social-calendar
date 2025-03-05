@@ -4,13 +4,18 @@ import CreatePostModal from "./CreatePostModal";
 import { Button } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { Post } from "../types/post";
+import PostList from "./PostList";
 
-const DayCell: React.FC<{ item: CalendarDay }> = ({ item }) => {
+const DayCell: React.FC<{ item: CalendarDay; posts: Post[] }> = ({
+  item,
+  posts,
+}) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleOpenModal = () => {
-    if (item.day && !item.isOutOfMonth) {
+    if (item.day && item.canCreatePost) {
       setIsModalOpen(true);
     }
   };
@@ -43,6 +48,11 @@ const DayCell: React.FC<{ item: CalendarDay }> = ({ item }) => {
           >
             {item.day.date()}
           </span>
+        )}
+        {posts.length > 0 && (
+          <div>
+            <PostList posts={posts} />
+          </div>
         )}
         {isHovered && item.canCreatePost && (
           <Button
