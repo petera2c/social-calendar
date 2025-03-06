@@ -15,6 +15,11 @@ export const generateFakePosts = (count: number = 10): Post[] => {
     );
 
     const isScheduled = timestamp.getTime() > now;
+    const status = isScheduled
+      ? Math.random() > 0.5
+        ? "scheduled"
+        : "draft"
+      : "published";
 
     return {
       socialMedia:
@@ -33,7 +38,7 @@ export const generateFakePosts = (count: number = 10): Post[] => {
         isScheduled ? "Will be posted" : "Was posted"
       } on ${timestamp.toLocaleDateString()}.`,
       timestamp: timestamp.toISOString(),
-      status: isScheduled ? "scheduled" : ("posted" as const),
+      status,
       media:
         Math.random() > 0.5
           ? [

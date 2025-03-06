@@ -12,4 +12,7 @@ export interface Post {
     url: string;
   }[];
   socialMedia: "x" | "facebook" | "instagram" | "linkedin";
+  status: PostStatus;
 }
+
+export type PostStatus = "draft" | "published" | "scheduled";

@@ -1,4 +1,5 @@
 import { Dayjs } from "dayjs";
+import { PostStatus } from "./post";
 
 export interface CalendarDay {
   canCreatePost: boolean;
@@ -12,4 +13,6 @@ export interface CalendarProps {
   onPrevMonth: () => void;
   onNextMonth: () => void;
   onYearChange: (year: number) => void;
+  onStatusChange: (status: PostStatus | "all") => void;
+  selectedStatus: PostStatus | "all";
 }

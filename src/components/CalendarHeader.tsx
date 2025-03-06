@@ -6,6 +6,7 @@ import {
   faChevronLeft,
   faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
+import StatusFilter from "./StatusFilter";
 
 const { Option } = Select;
 
@@ -14,6 +15,8 @@ const CalendarHeader: React.FC<CalendarProps> = ({
   onPrevMonth,
   onNextMonth,
   onYearChange,
+  onStatusChange,
+  selectedStatus,
 }) => {
   // Generate year options (e.g., +10 years from current year)
   const currentYear = currentDate.year();
@@ -21,33 +24,40 @@ const CalendarHeader: React.FC<CalendarProps> = ({
 
   return (
     <div className="mb-6">
-      {/* Navigation Icons Above */}
-      <div className="flex justify-end items-center mb-4 gap-4">
-        <div className="flex gap-2">
-          <Button
-            onClick={onPrevMonth}
-            aria-label="Previous Month"
-            icon={<FontAwesomeIcon icon={faChevronLeft} />}
-          />
-          <Button
-            onClick={onNextMonth}
-            aria-label="Next Month"
-            icon={<FontAwesomeIcon icon={faChevronRight} />}
+      <div className="flex justify-between items-center mb-4 gap-4">
+        <div>
+          <StatusFilter
+            selectedStatus={selectedStatus}
+            onStatusChange={onStatusChange}
           />
         </div>
-        {/* Year Selector */}
-        <Select
-          value={currentYear}
-          onChange={onYearChange}
-          style={{ width: 120 }}
-          popupMatchSelectWidth={false}
-        >
-          {years.map((year, index) => (
-            <Option key={index} value={year}>
-              {year}
-            </Option>
-          ))}
-        </Select>
+        <div className="flex items-center gap-2">
+          <div className="flex gap-2">
+            <Button
+              onClick={onPrevMonth}
+              aria-label="Previous Month"
+              icon={<FontAwesomeIcon icon={faChevronLeft} />}
+            />
+            <Button
+              onClick={onNextMonth}
+              aria-label="Next Month"
+              icon={<FontAwesomeIcon icon={faChevronRight} />}
+            />
+          </div>
+          {/* Year Selector */}
+          <Select
+            value={currentYear}
+            onChange={onYearChange}
+            style={{ width: 120 }}
+            popupMatchSelectWidth={false}
+          >
+            {years.map((year, index) => (
+              <Option key={index} value={year}>
+                {year}
+              </Option>
+            ))}
+          </Select>
+        </div>
       </div>
       {/* Month Display */}
       <h1 className="text-2xl font-bold text-center">
