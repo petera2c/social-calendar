@@ -18,7 +18,7 @@ const DayCell: React.FC<{ item: CalendarDay; posts: Post[] }> = ({
   const handleOpenModal = (post?: Post) => {
     if (item.day && item.canCreatePost) {
       setIsModalOpen(true);
-      setSelectedPost(post || null);
+      if (post) setSelectedPost(post);
     }
   };
 

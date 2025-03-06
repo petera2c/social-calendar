@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Form, Select, Button } from "antd";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import XPostLayout from "./layouts/XPostLayout";
 import FacebookPostLayout from "./layouts/FacebookPostLayout";
 import InstagramPostLayout from "./layouts/InstagramPostLayout";
@@ -10,6 +10,11 @@ import { Post } from "../types/post";
 import { useSocialPosts } from "../contexts/SocialPostsContext";
 
 const { Option } = Select;
+
+const convertDate = (date: Dayjs | string) => {
+  if (dayjs.isDayjs(date)) return date;
+  return dayjs(date);
+};
 
 interface CreatePostModalProps {
   isOpen: boolean;
@@ -41,21 +46,32 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({
   const socialMedia = Form.useWatch("socialMedia", form);
 
   const handleFinish = (values: Post) => {
-    const newPost: Post = {
-      ...values,
-      timestamp: postDate.format("YYYY-MM-DD HH:mm:ss"),
-      id: `${posts.length + 1}`,
-      author: {
-        id: "1",
-        name: "John Doe",
-        avatar: "https://via.placeholder.com/150",
-      },
-    };
-    const newPosts = [...posts, newPost];
-    setPosts(newPosts);
+    if (post) {
+      const updatedPost = {
+        ...post,
+        ...values,
+        timestamp: postDate.format("YYYY-MM-DD HH:mm:ss"),
+      };
+      const updatedPosts = posts.map((p) =>
+        p.id === post.id ? updatedPost : p
+      );
+      setPosts(updatedPosts);
+    } else {
+      const newPost: Post = {
+        ...values,
+        timestamp: postDate.format("YYYY-MM-DD HH:mm:ss"),
+        id: `${posts.length + 1}`,
+        author: {
+          id: "1",
+          name: "John Doe",
+          avatar: "https://via.placeholder.com/150",
+        },
+      };
+      const newPosts = [...posts, newPost];
+      setPosts(newPosts);
+    }
 
     form.resetFields();
-    setPostDate(day);
     onClose();
   };
 
@@ -109,7 +125,7 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({
   useEffect(() => {
     if (post) {
       form.setFieldsValue({
-        date: post.timestamp,
+        date: convertDate(post.timestamp),
         socialMedia: post.socialMedia,
         content: post.content,
         photos: post.media?.map((m) => m.url),
@@ -135,12 +151,19 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({
       <Form
         form={form}
         onFinish={handleFinish}
-        initialValues={{
-          date: post?.timestamp,
-          socialMedia: post?.socialMedia,
-          content: post?.content,
-          photos: post?.media?.map((m) => m.url),
-        }}
+        initialValues={
+          post
+            ? {
+                date: convertDate(post?.timestamp),
+                socialMedia: post?.socialMedia,
+                content: post?.content,
+                photos: post?.media?.map((m) => m.url),
+              }
+            : {
+                date: day,
+                socialMedia: "x",
+              }
+        }
       >
         <Form.Item label="Platform" className="mb-4" name="socialMedia">
           <Select className="w-full">
