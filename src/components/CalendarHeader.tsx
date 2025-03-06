@@ -42,8 +42,8 @@ const CalendarHeader: React.FC<CalendarProps> = ({
           style={{ width: 120 }}
           popupMatchSelectWidth={false}
         >
-          {years.map((year) => (
-            <Option key={year} value={year}>
+          {years.map((year, index) => (
+            <Option key={index} value={year}>
               {year}
             </Option>
           ))}

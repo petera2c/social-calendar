@@ -3,7 +3,7 @@ import dayjs, { Dayjs } from "dayjs";
 import CalendarHeader from "./CalendarHeader";
 import WeekdayHeader from "./WeekdayHeader";
 import CalendarGrid from "./CalendarGrid";
-import { useSocialPosts } from "../hooks/useSocialPosts";
+import { useSocialPosts } from "../contexts/SocialPostsContext";
 
 const Calendar: React.FC = () => {
   const [currentDate, setCurrentDate] = useState<Dayjs>(dayjs());
@@ -14,7 +14,15 @@ const Calendar: React.FC = () => {
   const handleYearChange = (year: number) =>
     setCurrentDate(currentDate.year(year));
 
-  const { data: posts } = useSocialPosts();
+  const { posts, isLoading } = useSocialPosts();
+
+  if (isLoading) {
+    return (
+      <div className="bg-white rounded-lg shadow-lg w-full h-[calc(100vh-2rem)] flex items-center justify-center">
+        Loading...
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white rounded-lg shadow-lg w-full h-[calc(100vh-2rem)] flex flex-col p-4">

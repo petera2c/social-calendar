@@ -13,15 +13,18 @@ const DayCell: React.FC<{ item: CalendarDay; posts: Post[] }> = ({
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
-  const handleOpenModal = () => {
+  const handleOpenModal = (post?: Post) => {
     if (item.day && item.canCreatePost) {
       setIsModalOpen(true);
+      setSelectedPost(post || null);
     }
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+    setSelectedPost(null);
   };
 
   return (
@@ -38,7 +41,7 @@ const DayCell: React.FC<{ item: CalendarDay; posts: Post[] }> = ({
           item.day && item.canCreatePost && setIsHovered(true)
         }
         onMouseLeave={() => setIsHovered(false)}
-        onClick={handleOpenModal}
+        onClick={() => handleOpenModal()}
       >
         {item.day && (
           <span
@@ -49,7 +52,9 @@ const DayCell: React.FC<{ item: CalendarDay; posts: Post[] }> = ({
             {item.day.date()}
           </span>
         )}
-        {posts.length > 0 && <PostList posts={posts} />}
+        {posts.length > 0 && (
+          <PostList onPostClick={handleOpenModal} posts={posts} />
+        )}
         {isHovered && item.canCreatePost && (
           <div className="absolute bottom-2 right-2">
             <Button type="primary" shape="circle" size="small">
@@ -63,6 +68,7 @@ const DayCell: React.FC<{ item: CalendarDay; posts: Post[] }> = ({
         onClose={handleCloseModal}
         day={item.day}
         isOutOfMonth={item.isOutOfMonth}
+        post={selectedPost}
       />
     </>
   );

@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Form, Select, Button } from "antd";
-import dayjs, { Dayjs } from "dayjs";
+import { Dayjs } from "dayjs";
 import XPostLayout from "./layouts/XPostLayout";
 import FacebookPostLayout from "./layouts/FacebookPostLayout";
 import InstagramPostLayout from "./layouts/InstagramPostLayout";
 import LinkedInPostLayout from "./layouts/LinkedInPostLayout";
 import PinterestPostLayout from "./layouts/PinterestPostLayout";
+import { Post } from "../types/post";
+import { useSocialPosts } from "../contexts/SocialPostsContext";
 
 const { Option } = Select;
 
@@ -14,6 +16,7 @@ interface CreatePostModalProps {
   onClose: () => void;
   day: Dayjs;
   isOutOfMonth: boolean;
+  post: Post | null;
 }
 
 const platformOptions = [
@@ -29,23 +32,35 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({
   onClose,
   day,
   isOutOfMonth,
+  post,
 }) => {
   const [form] = Form.useForm();
   const [postDate, setPostDate] = useState<Dayjs>(day);
-  const [platform, setPlatform] = useState<string>("x");
+  const { posts, setPosts } = useSocialPosts();
 
-  const handleFinish = (values: any) => {
-    console.log(`${platform.toUpperCase()} Post Data:`, {
+  const socialMedia = Form.useWatch("socialMedia", form);
+
+  const handleFinish = (values: Post) => {
+    const newPost: Post = {
       ...values,
-      date: postDate ? postDate.format("YYYY-MM-DD") : null,
-    });
+      timestamp: postDate.format("YYYY-MM-DD HH:mm:ss"),
+      id: `${posts.length + 1}`,
+      author: {
+        id: "1",
+        name: "John Doe",
+        avatar: "https://via.placeholder.com/150",
+      },
+    };
+    const newPosts = [...posts, newPost];
+    setPosts(newPosts);
+
     form.resetFields();
     setPostDate(day);
     onClose();
   };
 
   const renderLayout = () => {
-    switch (platform) {
+    switch (socialMedia) {
       case "x":
         return (
           <XPostLayout
@@ -91,14 +106,29 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({
     }
   };
 
+  useEffect(() => {
+    if (post) {
+      form.setFieldsValue({
+        date: post.timestamp,
+        socialMedia: post.socialMedia,
+        content: post.content,
+        photos: post.media?.map((m) => m.url),
+      });
+    } else if (day) {
+      form.setFieldsValue({
+        date: day,
+        socialMedia: "x",
+      });
+    }
+  }, [day, form, post]);
+
   return (
     <Modal
-      title={`Schedule a Post for Day ${day} on ${
-        platform.charAt(0).toUpperCase() + platform.slice(1)
-      }`}
+      title={`Posting to ${socialMedia}`}
       open={isOpen}
       onCancel={onClose}
       footer={null}
+      forceRender
       centered
       width={600}
     >
@@ -106,17 +136,16 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({
         form={form}
         onFinish={handleFinish}
         initialValues={{
-          date: day,
+          date: post?.timestamp,
+          socialMedia: post?.socialMedia,
+          content: post?.content,
+          photos: post?.media?.map((m) => m.url),
         }}
       >
-        <Form.Item label="Platform" className="mb-4">
-          <Select
-            value={platform}
-            onChange={(value) => setPlatform(value)}
-            className="w-full"
-          >
-            {platformOptions.map((opt) => (
-              <Option key={opt.value} value={opt.value}>
+        <Form.Item label="Platform" className="mb-4" name="socialMedia">
+          <Select className="w-full">
+            {platformOptions.map((opt, index) => (
+              <Option key={index} value={opt.value}>
                 {opt.label}
               </Option>
             ))}

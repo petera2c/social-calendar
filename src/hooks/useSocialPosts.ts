@@ -1,10 +1,9 @@
-import { useQuery } from "react-query";
 import { Post } from "../types/post";
 
 const socialMediaTypes = ["x", "facebook", "instagram", "linkedin"] as const;
 
 // Generate fake posts with both past and future dates
-const generateFakePosts = (count: number = 10): Post[] => {
+export const generateFakePosts = (count: number = 10): Post[] => {
   return Array.from({ length: count }, (_, index) => {
     // Generate a timestamp between 7 days ago and 14 days in the future
     const now = Date.now();
@@ -48,18 +47,5 @@ const generateFakePosts = (count: number = 10): Post[] => {
             ]
           : undefined,
     };
-  });
-};
-
-export const useSocialPosts = (count: number = 10) => {
-  return useQuery({
-    queryKey: ["socialPosts", count],
-    queryFn: async () => {
-      // Simulate API delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      return generateFakePosts(count);
-    },
-    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
-    refetchOnWindowFocus: false,
   });
 };
