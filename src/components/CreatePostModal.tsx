@@ -8,6 +8,7 @@ import LinkedInPostLayout from "./layouts/LinkedInPostLayout";
 import PinterestPostLayout from "./layouts/PinterestPostLayout";
 import { Post } from "../types/post";
 import { useSocialPosts } from "../contexts/SocialPostsContext";
+import CaptionGeneratorButton from "./shared/CaptionGeneratorButton";
 
 const { Option } = Select;
 
@@ -15,6 +16,12 @@ const convertDate = (date: Dayjs | string) => {
   if (dayjs.isDayjs(date)) return date;
   return dayjs(date);
 };
+
+const statusOptions = [
+  { value: "draft", label: "Draft" },
+  { value: "scheduled", label: "Scheduled" },
+  { value: "published", label: "Published" },
+];
 
 interface CreatePostModalProps {
   isOpen: boolean;
@@ -74,6 +81,11 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({
     form.resetFields();
     onClose();
   };
+  const handleCaptionGenerated = (caption: string) => {
+    form.setFieldsValue({
+      content: caption,
+    });
+  };
 
   const renderLayout = () => {
     switch (socialMedia) {
@@ -129,11 +141,13 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({
         socialMedia: post.socialMedia,
         content: post.content,
         photos: post.media?.map((m) => m.url),
+        status: post.status,
       });
     } else if (day) {
       form.setFieldsValue({
         date: day,
         socialMedia: "x",
+        status: "draft",
       });
     }
   }, [day, form, post]);
@@ -158,10 +172,12 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({
                 socialMedia: post?.socialMedia,
                 content: post?.content,
                 photos: post?.media?.map((m) => m.url),
+                status: post?.status,
               }
             : {
                 date: day,
                 socialMedia: "x",
+                status: "draft",
               }
         }
       >
@@ -174,9 +190,25 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({
             ))}
           </Select>
         </Form.Item>
+        <Form.Item label="Status" className="mb-4" name="status">
+          <Select className="w-full">
+            {statusOptions.map((opt, index) => (
+              <Option key={index} value={opt.value}>
+                {opt.label}
+              </Option>
+            ))}
+          </Select>
+        </Form.Item>
         {renderLayout()}
         <Form.Item className="mt-4">
-          <div className="flex justify-end space-x-2">
+          <div className="flex items-center justify-end space-x-2">
+            <CaptionGeneratorButton
+              platform={socialMedia}
+              day={day.date()}
+              postDate={postDate}
+              hasMedia={post?.media?.length ? post?.media?.length > 0 : false}
+              onCaptionGenerated={handleCaptionGenerated}
+            />
             <Button onClick={onClose}>Cancel</Button>
             <Button type="primary" htmlType="submit">
               Schedule Post

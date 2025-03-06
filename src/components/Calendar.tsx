@@ -32,7 +32,6 @@ const Calendar: React.FC = () => {
       </div>
     );
   }
-  console.log(filteredPosts);
 
   return (
     <div className="bg-white rounded-lg shadow-lg w-full h-[calc(100vh-2rem)] flex flex-col p-4">
